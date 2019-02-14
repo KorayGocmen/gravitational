@@ -27,7 +27,7 @@
 * All config parameters are specified in the config.toml file
 * When a worker registers, a UUID is assigned to the worker and worker details are kept in a map.
 * Starting a job on a specific worker
-  * Request: 
+  * Request (pseudo): 
     ```
     {
       "worker_id": "71382ed1-471d-4ae3-b572-f67d178f04e9",
@@ -35,12 +35,17 @@
       "command": "bash"
     }
     ```
-  * Response: 
+  * Response (pseudo): 
     ```
     {
       "job_id": "6c26a00e-3017-11e9-b210-d663bd873d93"
     }
     ```
+  * for above request, job starts with
+    ```shell
+    bash worker/scripts/count.sh
+    ```
+  * Allows you to run any scripts with proper command (python, ruby, js, bash etc) Also possible to run executables by leaving the `path` as `""`
 
 
 # Worker Overview
