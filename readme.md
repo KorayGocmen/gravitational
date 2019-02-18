@@ -9,7 +9,7 @@
 
 *   Support single scheduler and multiple workers.
 *   The scheduler must be aware of all workers' states. (requires the workers to register and deregister when going offline)
-*   The scheduler and the workers authenticate with each other via SSL.
+*   The scheduler and the workers authenticate with each other via TLS.
 *   The scheduler and workers, both need to have GRPC-APIs. 
     *   The scheduler GRPC-API support:
         *   Register a worker
@@ -26,6 +26,8 @@
 * [Scheduler Details](scheduler/scheduler.md)
 * All config parameters are specified in the config.toml file
 * When a worker registers, a UUID is assigned to the worker and worker details are kept in a map.
+  * This model use an in-memory model. however a production version code might be using Redis for a persistent-model.
+  * An SQL database might also be used, however I don't see a big benefit in using an SQL database. The lookups are often and the data is not complex, Redis would be a fine option.
 * Starting a job on a specific worker
   * Request (pseudo): 
     ```
@@ -57,3 +59,4 @@
 * When a job is started by the scheduler, a job object is created by the worker
   * This object specifies where the output of the job will be piped.
   * Also holds which command and which path was requested.
+
