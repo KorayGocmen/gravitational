@@ -13,13 +13,8 @@ type grpcServerConfig struct {
 	KeyFile string `toml:"key_file"`
 }
 
-type httpServerConfig struct {
-	Addr string `toml:"addr"`
-}
-
 type tomlConfig struct {
 	GRPCServer grpcServerConfig `toml:"grpc_server"`
-	HTTPServer httpServerConfig `toml:"http_server"`
 }
 
 var (
