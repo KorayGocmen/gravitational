@@ -19,10 +19,9 @@ func main() {
 	sig := make(chan os.Signal)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	for {
-		select {
-		case s := <-sig:
-			log.Fatalf("Signal (%d) received, stopping\n", s)
-		}
+	select {
+	case s := <-sig:
+		log.Printf("Signal (%d) received, stopping\n", s)
+		os.Exit(0)
 	}
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -25,11 +24,11 @@ func main() {
 	sig := make(chan os.Signal)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	for {
-		select {
-		case s := <-sig:
-			fatal(fmt.Sprintf("Signal (%d) received, stopping\n", s))
-		}
+	select {
+	case s := <-sig:
+		deregisterWorker()
+		log.Printf("Signal (%d) received, stopping\n", s)
+		os.Exit(0)
 	}
 }
 

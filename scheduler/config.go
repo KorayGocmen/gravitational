@@ -6,6 +6,8 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+// TODO: Vendor dependencies
+
 type grpcServerConfig struct {
 	Addr    string `toml:"addr"`
 	UseTLS  bool   `toml:"use_tls"`

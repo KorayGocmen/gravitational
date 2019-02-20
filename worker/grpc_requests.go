@@ -14,6 +14,7 @@ import (
 // Worker's GRPC server address is later used by the scheduler to dial
 // worker to start/stop/query jobs.
 func registerWorker() {
+	// TODO: Change to secure when basic functionality is done.
 	conn, err := grpc.Dial(config.Scheduler.Addr, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
@@ -41,6 +42,7 @@ func registerWorker() {
 // exit by the worker application should be calling deregister function
 // before termination.
 func deregisterWorker() {
+	// TODO: Change to secure when basic functionality is done.
 	conn, err := grpc.Dial(config.Scheduler.Addr, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)

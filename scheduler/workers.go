@@ -2,6 +2,8 @@ package main
 
 import (
 	"sync"
+
+	"github.com/google/uuid"
 )
 
 // Currently the workers are kept in an in-memory model.
@@ -42,9 +44,7 @@ func newWorker(address string) string {
 	workersMutex.Lock()
 	defer workersMutex.Unlock()
 
-	// TODO: Change this back
-	// workerID := uuid.New().String()
-	workerID := "test_worker"
+	workerID := uuid.New().String()
 	workers[workerID] = &worker{
 		id:   workerID,
 		addr: address,
