@@ -2,12 +2,10 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 )
 
 // Hardcoding config parameters, however these should
@@ -32,7 +30,7 @@ var (
 
 // Entry point of the worker application.
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	go registerWorker(ctx)
@@ -41,7 +39,6 @@ func main() {
 
 	select {
 	case err := <-errs:
-		fmt.Println(err)
 		deregisterWorker(ctx)
 		log.Fatalln(err)
 	case s := <-sig:
