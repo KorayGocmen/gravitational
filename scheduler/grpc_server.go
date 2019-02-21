@@ -42,28 +42,30 @@ func (s *server) DeregisterWorker(ctx context.Context, r *pb.DeregisterReq) (*pb
 }
 
 // startGRPCServer starts a scheduler server instance on the address specified
-// by the config.GRPCServer.Addr, if the config.GRPCServer.UseTLS is true, the
-// GRPC server will start with TLS with the key and crt file speficied in config.
+// by the grpcServerAddr, if the grpcServerUseTLS is true, the
+// GRPC server will start with TLS with the key and crt file speficied.
 func startGRPCServer() {
-	lis, err := net.Listen("tcp", config.GRPCServer.Addr)
+	lis, err := net.Listen("tcp", grpcServerAddr)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		errs <- err
+		return
 	}
 
-	// Start with TLS if option is set in the config.
+	// Start with TLS if option is set.
 	var opts []grpc.ServerOption
-	if config.GRPCServer.UseTLS {
+	if grpcServerUseTLS {
 		creds, err := credentials.NewServerTLSFromFile(
-			config.GRPCServer.CrtFile,
-			config.GRPCServer.KeyFile,
+			grpcServerCrtFile,
+			grpcServerKeyFile,
 		)
 		if err != nil {
-			log.Fatalln("Failed to generate credentials", err)
+			errs <- err
+			return
 		}
 		opts = []grpc.ServerOption{grpc.Creds(creds)}
 	}
 
-	log.Println("GRPC Server listening on", config.GRPCServer.Addr)
+	log.Println("GRPC Server listening on", grpcServerAddr)
 
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterSchedulerServer(grpcServer, &server{})

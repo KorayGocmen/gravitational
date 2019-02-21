@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"log"
-	"time"
 
 	pb "github.com/koraygocmen/gravitational/jobscheduler"
 	"google.golang.org/grpc"
@@ -13,24 +12,23 @@ import (
 // the calling worker with the worker's GRPC server address.
 // Worker's GRPC server address is later used by the scheduler to dial
 // worker to start/stop/query jobs.
-func registerWorker() {
+func registerWorker(ctx context.Context) {
 	// TODO: Change to secure when basic functionality is done.
-	conn, err := grpc.Dial(config.Scheduler.Addr, grpc.WithInsecure())
+	conn, err := grpc.Dial(schedulerAddr, grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		errs <- err
+		return
 	}
 	defer conn.Close()
 	c := pb.NewSchedulerClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
 	registerReq := pb.RegisterReq{
-		Address: config.GRPCServer.Addr,
+		Address: grpcServerAddr,
 	}
 	r, err := c.RegisterWorker(ctx, &registerReq)
 	if err != nil {
-		log.Fatalf("could not register: %v", err)
+		errs <- err
+		return
 	}
 
 	workerID = r.WorkerID
@@ -41,24 +39,23 @@ func registerWorker() {
 // Scheduler will remove the worker from the known workers. Any nonpanic
 // exit by the worker application should be calling deregister function
 // before termination.
-func deregisterWorker() {
+func deregisterWorker(ctx context.Context) {
 	// TODO: Change to secure when basic functionality is done.
-	conn, err := grpc.Dial(config.Scheduler.Addr, grpc.WithInsecure())
+	conn, err := grpc.Dial(schedulerAddr, grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		errs <- err
+		return
 	}
 	defer conn.Close()
 	c := pb.NewSchedulerClient(conn)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
 
 	deregisterReq := pb.DeregisterReq{
 		WorkerID: workerID,
 	}
 	r, err := c.DeregisterWorker(ctx, &deregisterReq)
 	if err != nil {
-		log.Fatalf("could not deregister: %v", err)
+		errs <- err
+		return
 	}
 
 	log.Printf("Deregistered OK: %t", r.Success)

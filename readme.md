@@ -24,7 +24,6 @@
 # Scheduler Overview
 
 * [Scheduler Details](scheduler/scheduler.md)
-* All config parameters are specified in the config.toml file
 * When a worker registers, a UUID is assigned to the worker and worker details are kept in a map.
   * This model use an in-memory model. however a production version code might be using Redis for a persistent-model.
   * An SQL database might also be used, however I don't see a big benefit in using an SQL database. The lookups are often and the data is not complex, Redis would be a fine option.
@@ -53,9 +52,8 @@
 # Worker Overview
 
 * [Worker Details](worker/worker.md)
-* All config parameters are specified in the config.toml file
 * Support a GRPC-API (Appendix B)
-* Jobs are basically scripts that are held in the specified folder in the config.
+* Jobs are basically scripts that are held in the specified folder.
 * When a job is started by the scheduler, a job object is created by the worker
   * This object specifies where the output of the job will be piped.
   * Also holds which command and which path was requested.
