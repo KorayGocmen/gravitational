@@ -41,14 +41,12 @@ func main() {
 
 	select {
 	case err := <-errs:
-		fatal(ctx, 1, err.Error())
+		fmt.Println(err)
+		deregisterWorker(ctx)
+		log.Fatalln(err)
 	case s := <-sig:
-		fatal(ctx, 0, fmt.Sprintf("Signal (%d) received, stopping\n", s))
+		deregisterWorker(ctx)
+		log.Printf("Signal (%d) received, stopping\n", s)
+		os.Exit(0)
 	}
-}
-
-func fatal(ctx context.Context, code int, message string) {
-	deregisterWorker(ctx)
-	log.Println(message)
-	os.Exit(code)
 }

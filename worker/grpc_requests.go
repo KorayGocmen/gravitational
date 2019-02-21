@@ -43,8 +43,10 @@ func deregisterWorker(ctx context.Context) {
 	// TODO: Change to secure when basic functionality is done.
 	conn, err := grpc.Dial(schedulerAddr, grpc.WithInsecure())
 	if err != nil {
-		errs <- err
-		return
+		// deregisterWorker errors can not be sent to the errs
+		// channel since the errs channel will be calling
+		// deregisterWorker again, causing an infinite loop.
+		log.Fatalln(err)
 	}
 	defer conn.Close()
 	c := pb.NewSchedulerClient(conn)
@@ -54,8 +56,10 @@ func deregisterWorker(ctx context.Context) {
 	}
 	r, err := c.DeregisterWorker(ctx, &deregisterReq)
 	if err != nil {
-		errs <- err
-		return
+		// deregisterWorker errors can not be sent to the errs
+		// channel since the errs channel will be calling
+		// deregisterWorker again, causing an infinite loop.
+		log.Fatalln(err)
 	}
 
 	log.Printf("Deregistered OK: %t", r.Success)
