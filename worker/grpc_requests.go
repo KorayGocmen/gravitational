@@ -46,7 +46,8 @@ func deregisterWorker(ctx context.Context) {
 		// deregisterWorker errors can not be sent to the errs
 		// channel since the errs channel will be calling
 		// deregisterWorker again, causing an infinite loop.
-		log.Fatalln(err)
+		log.Println(err)
+		return
 	}
 	defer conn.Close()
 	c := pb.NewSchedulerClient(conn)
@@ -59,7 +60,8 @@ func deregisterWorker(ctx context.Context) {
 		// deregisterWorker errors can not be sent to the errs
 		// channel since the errs channel will be calling
 		// deregisterWorker again, causing an infinite loop.
-		log.Fatalln(err)
+		log.Println(err)
+		return
 	}
 
 	log.Printf("Deregistered OK: %t", r.Success)
