@@ -17,8 +17,7 @@ message RegisterReq {
 }
 
 message RegisterRes {
-  bool success = 1;
-  string workerID = 2;
+  string workerID = 1;
 }
 
 message DeregisterReq {

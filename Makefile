@@ -10,10 +10,12 @@ PROTO_PATH = jobscheduler
 PROTO_NAME = job_scheduler.proto
 PROTO_PLUGIN = jobscheduler
 
+.PHONY: all build build_proto build_scheduler build_worker clean
+
 all: clean build
 
 build: build_scheduler build_worker
-	
+
 build_proto:
 	protoc -I $(PROTO_PATH)/ $(PROTO_PATH)/$(PROTO_NAME) --go_out=plugins=grpc:$(PROTO_PLUGIN)
 
