@@ -13,7 +13,8 @@ service Scheduler {
 }
 
 message RegisterReq {
-  string address = 1;
+  string apiKey = 1;
+  string address = 2;
 }
 
 message RegisterRes {

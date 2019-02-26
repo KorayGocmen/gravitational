@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 	"os/signal"
@@ -19,7 +20,14 @@ const (
 var (
 	errs = make(chan error)
 	sig  = make(chan os.Signal)
+
+	apiKey string
 )
+
+func init() {
+	flag.StringVar(&apiKey, "api_key", "-", "API key for the worker and scheduler api communication.")
+	flag.Parse()
+}
 
 // Entry point of the scheduler application.
 func main() {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 	"os"
 	"os/signal"
@@ -24,9 +25,17 @@ var (
 	// after registering on scheduler.
 	workerID string
 
+	// apiKey is used for scheduler and worker communications.
+	apiKey string
+
 	errs = make(chan error)
 	sig  = make(chan os.Signal)
 )
+
+func init() {
+	flag.StringVar(&apiKey, "api_key", "-", "API key for the worker and scheduler api communication.")
+	flag.Parse()
+}
 
 // Entry point of the worker application.
 func main() {

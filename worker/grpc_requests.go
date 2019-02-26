@@ -23,6 +23,7 @@ func registerWorker(ctx context.Context) {
 	c := pb.NewSchedulerClient(conn)
 
 	registerReq := pb.RegisterReq{
+		ApiKey:  apiKey,
 		Address: grpcServerAddr,
 	}
 	r, err := c.RegisterWorker(ctx, &registerReq)

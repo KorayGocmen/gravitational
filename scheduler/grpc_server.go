@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net"
 
@@ -16,6 +17,10 @@ type server struct{}
 // RegisterWorker registers a new worker on the server.
 // Workers call this method when they are coming online.
 func (s *server) RegisterWorker(ctx context.Context, r *pb.RegisterReq) (*pb.RegisterRes, error) {
+
+	if r.ApiKey != apiKey {
+		return nil, errors.New("api key unauthorized")
+	}
 
 	workerID := newWorker(r.Address)
 
