@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"log"
 	"os"
@@ -16,6 +15,8 @@ const (
 	grpcServerUseTLS  = true
 	grpcServerCrtFile = "scheduler.crt"
 	grpcServerKeyFile = "scheduler.key"
+
+	defAPIKey = "default-api-key"
 )
 
 var (
@@ -26,12 +27,8 @@ var (
 )
 
 func init() {
-	flag.StringVar(&apiKey, "api_key", "", "API key for the worker and scheduler api communication.")
+	flag.StringVar(&apiKey, "api_key", defAPIKey, "API key for the worker and scheduler api communication.")
 	flag.Parse()
-
-	if apiKey == "" {
-		errs <- errors.New("api key was not set")
-	}
 
 	checkKeyCrt()
 }
@@ -39,7 +36,7 @@ func init() {
 // Entry point of the scheduler application.
 func main() {
 
-	go startGRPCServer()
+	go startGRPCServer(server{})
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
