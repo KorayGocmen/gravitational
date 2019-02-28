@@ -18,6 +18,11 @@ type server struct{}
 // Workers call this method when they are coming online.
 func (s *server) RegisterWorker(ctx context.Context, r *pb.RegisterReq) (*pb.RegisterRes, error) {
 
+	// In a production system simple string comparison of an api key
+	// provided in run time is not the best way to handle authorization.
+	// Shared api keys across different applications create many challenges
+	// from a security and maintanance standpoint. A system like Vault to
+	// distribute the api key would be needed on a prod system.
 	if r.ApiKey != apiKey {
 		return nil, errors.New("api key unauthorized")
 	}
