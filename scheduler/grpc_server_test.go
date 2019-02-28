@@ -9,7 +9,6 @@ import (
 
 func TestRegisterWorker(t *testing.T) {
 	s := server{}
-	go startGRPCServer(s)
 
 	workerAddr := "127.0.0.1:53000"
 
@@ -40,7 +39,6 @@ func TestRegisterWorker(t *testing.T) {
 
 func TestDeregisterWorker(t *testing.T) {
 	s := server{}
-	go startGRPCServer(s)
 
 	workerAddr := "127.0.0.1:53000"
 
