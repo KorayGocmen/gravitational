@@ -36,7 +36,7 @@ func init() {
 // Entry point of the scheduler application.
 func main() {
 
-	go startGRPCServer(server{})
+	go startGRPCServer()
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 

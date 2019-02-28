@@ -54,7 +54,7 @@ func (s *server) DeregisterWorker(ctx context.Context, r *pb.DeregisterReq) (*pb
 // startGRPCServer starts a scheduler server instance on the address specified
 // by the grpcServerAddr, if the grpcServerUseTLS is true, the
 // GRPC server will start with TLS with the key and crt file speficied.
-func startGRPCServer(s server) {
+func startGRPCServer() {
 	lis, err := net.Listen("tcp", grpcServerAddr)
 	if err != nil {
 		errs <- err
@@ -78,6 +78,6 @@ func startGRPCServer(s server) {
 	log.Println("GRPC Server listening on", grpcServerAddr)
 
 	grpcServer := grpc.NewServer(opts...)
-	pb.RegisterSchedulerServer(grpcServer, &s)
+	pb.RegisterSchedulerServer(grpcServer, &server{})
 	grpcServer.Serve(lis)
 }
