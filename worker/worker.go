@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 	"os"
 	"os/signal"
@@ -12,11 +13,12 @@ import (
 // be handled via a config file in a prod system.
 const (
 	grpcServerAddr    = "127.0.0.1:30000"
-	grpcServerUseTLS  = false
-	grpcServerCrtFile = "server.pem"
-	grpcServerKeyFile = "server.key"
+	grpcServerUseTLS  = true
+	grpcServerCrtFile = "worker.crt"
+	grpcServerKeyFile = "worker.key"
 
-	schedulerAddr = "127.0.0.1:50000"
+	schedulerAddr    = "127.0.0.1:50000"
+	schedulerCrtFile = "scheduler.crt"
 )
 
 var (
@@ -24,9 +26,23 @@ var (
 	// after registering on scheduler.
 	workerID string
 
+	// apiKey is used for scheduler and worker communications.
+	apiKey string
+
 	errs = make(chan error)
 	sig  = make(chan os.Signal)
 )
+
+func init() {
+	flag.StringVar(&apiKey, "api_key", "", "API key for the worker and scheduler api communication.")
+	flag.Parse()
+
+	if apiKey == "" {
+		log.Fatalln("API key was not specified")
+	}
+
+	checkKeyCrt()
+}
 
 // Entry point of the worker application.
 func main() {

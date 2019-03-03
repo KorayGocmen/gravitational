@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/subtle"
+	"errors"
 	"log"
 	"net"
 
@@ -16,6 +18,15 @@ type server struct{}
 // RegisterWorker registers a new worker on the server.
 // Workers call this method when they are coming online.
 func (s *server) RegisterWorker(ctx context.Context, r *pb.RegisterReq) (*pb.RegisterRes, error) {
+
+	// In a production system simple string comparison of an api key
+	// provided in run time is not the best way to handle authorization.
+	// Shared api keys across different applications create many challenges
+	// from a security and maintanance standpoint. A system like Vault to
+	// distribute the api key would be needed on a prod system.
+	if subtle.ConstantTimeCompare([]byte(r.ApiKey), []byte(apiKey)) == 0 {
+		return nil, errors.New("api key unauthorized")
+	}
 
 	workerID := newWorker(r.Address)
 

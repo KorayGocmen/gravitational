@@ -6,6 +6,7 @@ import (
 
 	pb "github.com/koraygocmen/gravitational/jobscheduler"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 // registerWorker dials the scheduler GRPC server and registers
@@ -13,16 +14,28 @@ import (
 // Worker's GRPC server address is later used by the scheduler to dial
 // worker to start/stop/query jobs.
 func registerWorker(ctx context.Context) {
-	// TODO: Change to secure when basic functionality is done.
-	conn, err := grpc.Dial(schedulerAddr, grpc.WithInsecure())
+	var (
+		conn *grpc.ClientConn
+		err  error
+	)
+
+	if grpcServerUseTLS {
+		creds, _ := credentials.NewClientTLSFromFile(schedulerCrtFile, "")
+		conn, err = grpc.Dial(schedulerAddr, grpc.WithTransportCredentials(creds))
+	} else {
+		conn, err = grpc.Dial(schedulerAddr, grpc.WithInsecure())
+	}
+
 	if err != nil {
 		errs <- err
 		return
 	}
+
 	defer conn.Close()
 	c := pb.NewSchedulerClient(conn)
 
 	registerReq := pb.RegisterReq{
+		ApiKey:  apiKey,
 		Address: grpcServerAddr,
 	}
 	r, err := c.RegisterWorker(ctx, &registerReq)
@@ -40,8 +53,18 @@ func registerWorker(ctx context.Context) {
 // exit by the worker application should be calling deregister function
 // before termination.
 func deregisterWorker(ctx context.Context) {
-	// TODO: Change to secure when basic functionality is done.
-	conn, err := grpc.Dial(schedulerAddr, grpc.WithInsecure())
+	var (
+		conn *grpc.ClientConn
+		err  error
+	)
+
+	if grpcServerUseTLS {
+		creds, _ := credentials.NewClientTLSFromFile(schedulerCrtFile, "")
+		conn, err = grpc.Dial(schedulerAddr, grpc.WithTransportCredentials(creds))
+	} else {
+		conn, err = grpc.Dial(schedulerAddr, grpc.WithInsecure())
+	}
+
 	if err != nil {
 		// deregisterWorker errors can not be sent to the errs
 		// channel since the errs channel will be calling
@@ -49,6 +72,7 @@ func deregisterWorker(ctx context.Context) {
 		log.Println(err)
 		return
 	}
+
 	defer conn.Close()
 	c := pb.NewSchedulerClient(conn)
 
