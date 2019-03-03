@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/subtle"
 	"errors"
 	"log"
 	"net"
@@ -23,7 +24,7 @@ func (s *server) RegisterWorker(ctx context.Context, r *pb.RegisterReq) (*pb.Reg
 	// Shared api keys across different applications create many challenges
 	// from a security and maintanance standpoint. A system like Vault to
 	// distribute the api key would be needed on a prod system.
-	if r.ApiKey != apiKey {
+	if subtle.ConstantTimeCompare([]byte(r.ApiKey), []byte(apiKey)) == 0 {
 		return nil, errors.New("api key unauthorized")
 	}
 

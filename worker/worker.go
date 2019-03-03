@@ -19,8 +19,6 @@ const (
 
 	schedulerAddr    = "127.0.0.1:50000"
 	schedulerCrtFile = "scheduler.crt"
-
-	defAPIKey = "default-api-key"
 )
 
 var (
@@ -36,8 +34,12 @@ var (
 )
 
 func init() {
-	flag.StringVar(&apiKey, "api_key", defAPIKey, "API key for the worker and scheduler api communication.")
+	flag.StringVar(&apiKey, "api_key", "", "API key for the worker and scheduler api communication.")
 	flag.Parse()
+
+	if apiKey == "" {
+		log.Fatalln("API key was not specified")
+	}
 
 	checkKeyCrt()
 }

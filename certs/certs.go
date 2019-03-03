@@ -27,6 +27,9 @@ type CrtTemplate struct {
 // GenerateCrtKey generates key and crt for the given path.
 func GenerateCrtKey(keyPath, crtPath string, c CrtTemplate) error {
 	priv, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		return errors.New("error creating private key" + err.Error())
+	}
 
 	template := x509.Certificate{
 		SerialNumber: c.SerialNumber,
