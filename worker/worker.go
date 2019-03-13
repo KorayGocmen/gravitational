@@ -49,6 +49,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	go startGRPCServer()
 	go registerWorker(ctx)
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
